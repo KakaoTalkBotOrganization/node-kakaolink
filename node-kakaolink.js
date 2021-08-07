@@ -1,4 +1,4 @@
-const { AES } = require('./crypto');
+const { AES } = require('crypto-js');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const { load } = require('cheerio');
@@ -41,10 +41,13 @@ class KakaoLink {
         form.append('validation_params', '{}');
         form.append('ka', this.#kakaoStatic);
         form.append('lcba', '');
-        const loginResponse = await fetch('https://sharer.kakao.com/talk/friends/picker/link', {
-            body: form,
-            method: 'POST',
-            headers: { 'User-Agent': this.#kakaoStatic }
+        const loginResponse = await fetch('https://accounts.kakao.com/login?continue=https%3A%2F%2Faccounts.kakao.com%2Fweblogin%2Faccount%2Finfo', {
+            //body: form,
+            method: 'GET',
+            headers: { 
+                'User-Agent': this.#kakaoStatic,
+                'referer': 'https://accounts.kakao.com'
+            }
         });
 
         switch (loginResponse.status) {
@@ -125,6 +128,7 @@ class KakaoLink {
 
         switch (response.status) {
             case 400:
+                //console.error(await response.text());
                 throw new ReferenceError('템플릿 객체가 올바르지 않거나, Web 플랫폼에 등록된 도메인과 현재 도메인이 일치하지 않습니다.');
             case 200:
                 const cookies = this.#getCookies(response);
