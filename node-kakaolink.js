@@ -9,6 +9,11 @@ class KakaoLink {
     #referer = null;
     #kakaoStatic = 'sdk/1.36.6 os/javascript lang/en-US device/Win32 origin/';
 
+    /**
+     * 카카오 SDK 초기화
+     * @param {String} apiKey - 카카오 계정 JavaScript 키
+     * @param {String} location - 카카오 디벨로퍼에 추가한 사이트 도메인중 하나
+    **/        
     constructor(apiKey, location) {
         if (apiKey.constructor !== String || location.constructor !== String) {
             throw new TypeError('매개변수의 타입은 String이어야 합니다.');
@@ -24,6 +29,11 @@ class KakaoLink {
         this.#kakaoStatic += encodeURIComponent(location);
     }
 
+    /**
+     * 로그인
+     * @param {String} email - 카카오 계정 아이디
+     * @param {String} password - 카카오 계정 비밀번호
+    **/
     async login(email, password) {
         if (email.constructor !== String) {
             throw new TypeError('이메일의 타입은 String이어야 합니다.');
@@ -35,14 +45,8 @@ class KakaoLink {
             throw new ReferenceError('로그인 메서드를 카카오 SDK가 초기화되기 전에 호출하였습니다.');
         }
 
-        const form = new FormData();
-        form.append('app_key', this.#apiKey);
-        form.append('validation_action', 'default');
-        form.append('validation_params', '{}');
-        form.append('ka', this.#kakaoStatic);
-        form.append('lcba', '');
+        // AES 키 얻기
         const loginResponse = await fetch('https://accounts.kakao.com/login?continue=https%3A%2F%2Faccounts.kakao.com%2Fweblogin%2Faccount%2Finfo', {
-            //body: form,
             method: 'GET',
             headers: { 
                 'User-Agent': this.#kakaoStatic,
@@ -66,6 +70,7 @@ class KakaoLink {
                     TIARA: this.#getCookies(await fetch('https://stat.tiara.kakao.com/track?d=%7B%22sdk%22%3A%7B%22type%22%3A%22WEB%22%2C%22version%22%3A%221.1.15%22%7D%7D'))['TIARA']
                 });
 
+                // ASE키를 기반으로 로그인 정보 전송 및 쿠키 저장
                 const form = new FormData();
                 form.append('os', 'web');
                 form.append('webview_v', '2');
@@ -109,7 +114,13 @@ class KakaoLink {
         }
     }
 
-    async send(room, params, type = 'default') {
+    /**
+     * 카카오링크 전송
+     * @param {String} room - 카카오링크를 보낼 방 이름
+     * @param {String} params - 카카오링크 탬플릿 파라미터
+     * @param {String} [type] - 카카오링크 탬플릿 타입
+    **/
+    async send(room, params, type = 'custom') {
         const form = new FormData();
         form.append('app_key', this.#apiKey);
         form.append('validation_action', type);
