@@ -1,6 +1,6 @@
 # node-kaling
-> The repo was forked in [https://github.com/cjh980402/node-kakaolink].<br/>
-> 해당 레포는 [https://github.com/cjh980402/node-kakaolink]를 포크하여 400에러를 수정한 버전입니다.<br/>
+> The repo was forked in https://github.com/cjh980402/node-kakaolink.<br/>
+> 해당 레포는 https://github.com/cjh980402/node-kakaolink 를 포크하여 400에러를 수정한 버전입니다.<br/>
 
 nodejs에서 카카오링크를 사용할 수 있게 합니다.
 
